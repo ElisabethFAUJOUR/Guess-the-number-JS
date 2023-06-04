@@ -1,56 +1,83 @@
+const guesses = document.querySelector('.guesses');
+const lastResult = document.querySelector('.lastResult');
+const lowOrHi = document.querySelector('.lowOrHi');
+const guessSubmit = document.querySelector('.guessSubmit');
+const guessField = document.querySelector('.guessField');
+const resetButton = document.createElement('button');
 
-/*On déclare la fonction "generateRandomNumber" pour générer un nombre aléatoire avec les paramètres min et max*/
+let randomNumber;
+let guessCount = 1;
+
+/**
+ * Generate a random number
+ */
 function generateRandomNumber(min, max) {
-    const mathRandomNumber = Math.floor(Math.random() * (max - min + 1) + min); /*On déclare la variable "mathRandomNumber" qui contient le calcul du nombre aléatoire entre min et max*/
-    return mathRandomNumber; /*La fonction renvoi la variable "mathRandomNumber" = nombre généré aléatoirement.*/
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
-/*On déclare la fonction play qui regroupe les instructions du jeu "juste prix"*/
-function play() {
-    const game = { /*On déclare les variables regroupées dans l'objet "game" => randomNumber et guessCount*/
-        randomNumber: generateRandomNumber(minNumber, maxNumber), /*On apelle la fonction generateRandomNumber avec les attributs minNumber et maxNumber que l'on déclare avant d'executer la fonction play */
-        guessCount: 0 /*On déclare la variable guessCount qui correspond au nombre de tours, puis on l'initialise à 0 tour.*/
-    };
-
-    let userGuess = Number(prompt("Devinez le nombre entre 0 et 100:")); /*On déclare la variable userGuess qui va demander à l'utilisateur de rentrer un nombre entre 0 et 100*/
-
-    while (userGuess !== game.randomNumber) { /*BOUCLE TANT QUE le nombre saisi userGuess par l'utilisateur est différent du nombre aléatoire game.randomNumber*/
-        if (userGuess < game.randomNumber) {
-            game.guessCount++;
-            alert("Le nombre est trop petit!");
-        }
-        else if (userGuess > game.randomNumber) {
-            game.guessCount++;
-            alert("Le nombre est trop grand!");
-        }
-        userGuess = Number(prompt("Devinez le nombre entre 0 et 100:"));
-    }
-
-    alert(`C'est gagné! Tu as trouvé en + ${game.guessCount} essais.`);
-
-    /*On enreguistre le score guessCount dans un tableau et il s'affiche avec une alert*/
-    score.push(game.guessCount); 
-    alert(`Scores : ${score.join(', ')} essais.`);
-   
-    /*Demander si l'utilisateur veut rejouer, il doit confirmer ok ou annuler*/
-    const playAgain = confirm("Voulez-vous rejouer ?"); 
-
-    if (playAgain) {
-        play();   
-    } else {
-        console.log(`Scores : ${scoreContent}`);
-    }
+/**
+ * Init game
+ */
+function initGame() {
+  randomNumber = generateRandomNumber(1, 100);
+  guessCount = 1;
+  guesses.textContent = '';
+  lastResult.textContent = '';
+  lowOrHi.textContent = '';
+  guessField.disabled = false;
+  guessSubmit.disabled = false;
+  resetButton.parentNode && resetButton.parentNode.removeChild(resetButton);
+  guessField.value = '';
+  guessField.focus();
 }
 
-/*On déclare les variables minNumber et maxNumber => attributs de la fonction generateRandomNumber.*/
-const minNumber = 0;
-const maxNumber = 100;
+/**
+ * Check the input value 
+ */
+function checkGuess() {
+  const userGuess = parseInt(guessField.value);
+  guesses.textContent += userGuess + ' ';
 
-/*Déclaration du tableau pour repertorier le numero de la partie et le nombre d'essais à chaque partie*/
-const score = [];
+  if (userGuess === randomNumber) {
+    showResult('Bravo, vous avez trouvé le nombre !', 'green');
+    setGameOver();
+  } else if (guessCount === 10) {
+    showResult('!!! PERDU !!!', 'red');
+    setGameOver();
+  } else {
+    showResult('Faux !', 'red');
+    lowOrHi.textContent = userGuess < randomNumber ? 'Le nombre saisi est trop petit !' : 'Le nombre saisi est trop grand !';
+  }
+  guessCount++;
+  guessField.value = '';
+  guessField.focus();
+}
 
-/*On execute la fonction play une premère fois.*/
-play()
+function handleSubmitClick() {
+  const guessSubmit = document.querySelector('.guessSubmit');
+  guessSubmit.addEventListener('click', checkGuess);
+}
 
+/**
+ * Show the result
+ */
+function showResult(message, color) {
+  lastResult.textContent = message;
+  lastResult.style.backgroundColor = color;
+}
 
+/**
+ * End game and start a new game
+ */
+function setGameOver() {
+  guessField.disabled = true;
+  guessSubmit.disabled = true;
+  resetButton.textContent = 'Commencer une nouvelle partie';
+  document.body.appendChild(resetButton);
+  resetButton.addEventListener('click', initGame);
+}
 
+initGame();
+handleSubmitClick();

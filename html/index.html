@@ -7,6 +7,23 @@
     <title>Le juste prix</title>
 </head>
 <body>
-    <script src="../js/main.js"></script>
+    <h1>Devinvez un nombre</h1>
+    <p>Nous avons généré un nombre aléatoire entre 1 et 100, tentez de le deviner en 10 tours maximum. Pour chaque tentative, nous vous dirons si votre estimation est trop ou pas assez élevée.</p>
+
+    <div class="form">
+      <label for="guessField">Entrez votre proposition: </label>
+      <input type="number" min="1" max="100" required id="guessField" class="guessField">
+      <input type="submit" value="Valider" class="guessSubmit">
+    </div>
+
+    <div class="resultParas">
+      <p class="guesses"></p>
+      <p class="lastResult"></p>
+      <p class="lowOrHi"></p>
+    </div>
+
+    <script src="../js/main.js" defer></script>
 </body>
 </html>
+
+
