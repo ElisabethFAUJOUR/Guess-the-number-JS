@@ -38,17 +38,31 @@ function initGame() {
  */
 function checkGuess() {
   const userGuess = parseInt(guessField.value);
-  guesses.textContent += userGuess + ' ';
+  
+  if(userGuess === 'Nan') { 
+    guesses.textContent += userGuess + ' ';
+  }
 
-  if (userGuess === randomNumber) {
-    showResult('Bravo, vous avez trouvé le nombre !', 'green');
+  if (isNaN(userGuess)) {
+    return;
+  } else if (userGuess === randomNumber) {
+    showResult(`Bravo, vous avez trouvé le nombre : ${randomNumber} !`);
+    lowOrHi.classList.remove('low', 'high');
+    lowOrHi.textContent = '';
     setGameOver();
   } else if (guessCount === 10) {
-    showResult('!!! PERDU !!!', 'red');
+    showResult('!!! PERDU !!!');
     setGameOver();
   } else {
-    showResult('Faux !', 'red');
-    lowOrHi.textContent = userGuess < randomNumber ? 'Le nombre saisi est trop petit !' : 'Le nombre saisi est trop grand !';
+    if (userGuess < randomNumber) {
+      lowOrHi.textContent = 'Trop PETIT';
+      lowOrHi.classList.add('low');
+      lowOrHi.classList.remove('high');
+    } else {
+      lowOrHi.textContent = 'Trop GRAND';
+      lowOrHi.classList.add('high');
+      lowOrHi.classList.remove('low');
+    }
   }
   guessCount++;
   guessField.value = '';
@@ -63,19 +77,20 @@ function handleSubmitClick() {
 /**
  * Show the result
  */
-function showResult(message, color) {
+function showResult(message) {
   lastResult.textContent = message;
-  lastResult.style.backgroundColor = color;
 }
 
 /**
  * End game and start a new game
  */
 function setGameOver() {
+  const resultParas = document.querySelector('.resultParas');
   guessField.disabled = true;
   guessSubmit.disabled = true;
-  resetButton.textContent = 'Commencer une nouvelle partie';
-  document.body.appendChild(resetButton);
+  resetButton.textContent = 'Rejouer ?';
+  resetButton.classList.add('resetButton');
+  resultParas.appendChild(resetButton);
   resetButton.addEventListener('click', initGame);
 }
 

@@ -4,14 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/resets.css">
     <title>Le juste prix</title>
 </head>
+
 <body>
-    <h1>Devinvez un nombre</h1>
-    <p>Nous avons généré un nombre aléatoire entre 1 et 100, tentez de le deviner en 10 tours maximum. Pour chaque tentative, nous vous dirons si votre estimation est trop ou pas assez élevée.</p>
+  <header class="header">
+    <h1 class="header__title">Devinez un nombre</h1>
+  </header>
+
+  <main class="main">
+    <p class="description">Nous avons généré un nombre aléatoire entre 1 et 100, tentez de le deviner en 10 tours maximum. Pour chaque tentative, nous vous dirons si votre estimation est trop ou pas assez élevée.</p>
 
     <div class="form">
-      <label for="guessField">Entrez votre proposition: </label>
+      <label class="form__label" for="guessField">Entrez votre proposition: </label>
       <input type="number" min="1" max="100" required id="guessField" class="guessField">
       <input type="submit" value="Valider" class="guessSubmit">
     </div>
@@ -21,6 +28,7 @@
       <p class="lastResult"></p>
       <p class="lowOrHi"></p>
     </div>
+  </main>
 
     <script src="../js/main.js" defer></script>
 </body>
