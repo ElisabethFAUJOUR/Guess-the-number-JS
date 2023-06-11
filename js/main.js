@@ -1,98 +1,117 @@
-const guesses = document.querySelector('.guesses');
-const lastResult = document.querySelector('.lastResult');
-const lowOrHi = document.querySelector('.lowOrHi');
-const guessSubmit = document.querySelector('.guessSubmit');
-const guessField = document.querySelector('.guessField');
-const resetButton = document.createElement('button');
+const app = {
 
-let randomNumber;
-let guessCount = 1;
+  guesses: document.querySelector('.guesses'),
+  lastResult: document.querySelector('.lastResult'),
+  lowOrHi: document.querySelector('.lowOrHi'),
+  guessSubmit: document.querySelector('.guessSubmit'),
+  guessField: document.querySelector('.guessField'),
+  resetButton: document.createElement('button'),
 
-/**
- * Generate a random number
- */
-function generateRandomNumber(min, max) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min + 1) + min);
-}
+  randomNumber: null,
+  guessCount: 1,
 
-/**
- * Init game
- */
-function initGame() {
-  randomNumber = generateRandomNumber(1, 100);
-  guessCount = 1;
-  guesses.textContent = '';
-  lastResult.textContent = '';
-  lowOrHi.textContent = '';
-  guessField.disabled = false;
-  guessSubmit.disabled = false;
-  resetButton.parentNode && resetButton.parentNode.removeChild(resetButton);
-  guessField.value = '';
-  guessField.focus();
-}
+  // ----- init -----
 
-/**
- * Check the input value 
- */
-function checkGuess() {
-  const userGuess = parseInt(guessField.value);
-  
-  if(userGuess === 'Nan') { 
-    guesses.textContent += userGuess + ' ';
-  }
+  init() {
+    app.initGame();
+    app.listenToSubmitClick();
+  },
 
-  if (isNaN(userGuess)) {
-    return;
-  } else if (userGuess === randomNumber) {
-    showResult(`Bravo, vous avez trouvé le nombre : ${randomNumber} !`);
-    lowOrHi.classList.remove('low', 'high');
-    lowOrHi.textContent = '';
-    setGameOver();
-  } else if (guessCount === 10) {
-    showResult('!!! PERDU !!!');
-    setGameOver();
-  } else {
-    if (userGuess < randomNumber) {
-      lowOrHi.textContent = 'Trop PETIT';
-      lowOrHi.classList.add('low');
-      lowOrHi.classList.remove('high');
-    } else {
-      lowOrHi.textContent = 'Trop GRAND';
-      lowOrHi.classList.add('high');
-      lowOrHi.classList.remove('low');
+  // ----- functions -----
+
+  /**
+   * Generate a random number
+   * @param {number} min 
+   * @param {number} max 
+   * @returns {number} - random number 
+   */
+  generateRandomNumber(min, max) {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min + 1) + min);
+  },
+
+  /**
+   * Init game
+   */
+  initGame() {
+    app.randomNumber = app.generateRandomNumber(1, 100);
+    app.guessCount = 1;
+    app.guesses.textContent = '';
+    app.lastResult.textContent = '';
+    app.lowOrHi.textContent = '';
+    app.guessField.disabled = false;
+    app.guessSubmit.disabled = false;
+    app.resetButton.parentNode && app.resetButton.parentNode.removeChild(app.resetButton);
+    app.guessField.value = '';
+    app.guessField.focus();
+  },
+
+  /**
+   * Check the input value 
+   * @returns 
+   */
+  checkGuess() {
+    const userGuess = parseInt(app.guessField.value);
+
+    if (userGuess === 'Nan') {
+      app.guesses.textContent += userGuess + ' ';
     }
+
+    if (isNaN(userGuess)) {
+      return;
+    } else if (userGuess === app.randomNumber) {
+      app.showResult(`Bravo, vous avez trouvé le nombre : ${app.randomNumber} en ${app.guessCount} coups !`);
+      app.lowOrHi.classList.remove('low', 'high');
+      app.lowOrHi.textContent = '';
+      app.setGameOver();
+    } else if (app.guessCount === 10) {
+      app.showResult('!!! PERDU !!!');
+      app.setGameOver();
+    } else {
+      if (userGuess < app.randomNumber) {
+        app.lowOrHi.textContent = 'Trop PETIT';
+        app.lowOrHi.classList.add('low');
+        app.lowOrHi.classList.remove('high');
+      } else {
+        app.lowOrHi.textContent = 'Trop GRAND';
+        app.lowOrHi.classList.add('high');
+        app.lowOrHi.classList.remove('low');
+      }
+    }
+    app.guessCount++;
+    app.guessField.value = '';
+    app.guessField.focus();
+  },
+
+  /**
+   * Show the result
+   * @param {string} message 
+   */
+  showResult(message) {
+    app.lastResult.textContent = message;
+  },
+
+  /**
+   * End game and start a new game
+   */
+  setGameOver() {
+    const resultParas = document.querySelector('.resultParas');
+    app.guessField.disabled = true;
+    app.guessSubmit.disabled = true;
+    app.resetButton.textContent = 'Rejouer ?';
+    app.resetButton.classList.add('resetButton');
+    resultParas.appendChild(app.esetButton);
+    app.resetButton.addEventListener('click', app.initGame);
+  },
+
+  // ----- listener events -----
+
+  listenToSubmitClick() {
+    const guessSubmit = document.querySelector('.guessSubmit');
+    guessSubmit.addEventListener('click', app.checkGuess);
   }
-  guessCount++;
-  guessField.value = '';
-  guessField.focus();
-}
 
-function handleSubmitClick() {
-  const guessSubmit = document.querySelector('.guessSubmit');
-  guessSubmit.addEventListener('click', checkGuess);
-}
+};
 
-/**
- * Show the result
- */
-function showResult(message) {
-  lastResult.textContent = message;
-}
-
-/**
- * End game and start a new game
- */
-function setGameOver() {
-  const resultParas = document.querySelector('.resultParas');
-  guessField.disabled = true;
-  guessSubmit.disabled = true;
-  resetButton.textContent = 'Rejouer ?';
-  resetButton.classList.add('resetButton');
-  resultParas.appendChild(resetButton);
-  resetButton.addEventListener('click', initGame);
-}
-
-initGame();
-handleSubmitClick();
+window.addEventListener('DOMContentLoaded', app.init);
