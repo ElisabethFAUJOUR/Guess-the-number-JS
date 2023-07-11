@@ -42,7 +42,7 @@ const app = {
     app.lowOrHi.textContent = '';
     app.guessField.disabled = false;
     app.guessSubmit.disabled = false;
-    app.resetButton.parentNode && app.resetButton.parentNode.removeChild(app.resetButton);
+    app.resetButton.classList.add('hidden');
     app.guessField.value = '';
     app.guessField.focus();
   },
@@ -101,15 +101,18 @@ const app = {
     app.guessSubmit.disabled = true;
     app.resetButton.textContent = 'Rejouer ?';
     app.resetButton.classList.add('resetButton');
-    resultParas.appendChild(app.esetButton);
+    app.resetButton.classList.remove('hidden');
+    resultParas.appendChild(app.resetButton);
     app.resetButton.addEventListener('click', app.initGame);
   },
 
   // ----- listener events -----
 
+  /**
+   * Listen to submit button click 
+   */
   listenToSubmitClick() {
-    const guessSubmit = document.querySelector('.guessSubmit');
-    guessSubmit.addEventListener('click', app.checkGuess);
+    app.guessSubmit.addEventListener('click', app.checkGuess);
   }
 
 };
